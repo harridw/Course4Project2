@@ -58,8 +58,9 @@ will need to make a single plot. Unless specified, you can use any plotting syst
 
 ##### Question 1:  
 ````
-##### Have total emissions from PM2.5 decreased in the United States from 1999 to 2008?  Using the base plotting system,  
-make a plot showing the total PM2.5 emission from all sources for each of the years 1999, 2002, 2005, and 2008.  
+Have total emissions from PM2.5 decreased in the United States from 1999 to 2008?  Using the base  
+plotting system, make a plot showing the total PM2.5 emission from all sources for each of the years  
+1999, 2002, 2005, and 2008.  
 ````
 
 ##### Data Exploration  
@@ -71,12 +72,40 @@ Assumptions:
 
 ##### Review the data
 ````  
-There are two activities that are performed prior to evaluating the data.  The first activity is loading 'packages'  
-to be used in the exploration of the data, including plots of the data.  The second activity is reading the files  
-into R.  
+There are two activities that are performed prior to evaluating the data.  The first activity is  
+loading 'packages' to be used in the exploration of the data, including plots of the data.  The  
+second activity is reading the files into R.  
 
 NOTE:  It is assumed these files are loaded in working directory, not in zip folder.  
 ````
+
+###### Install the packages  
+````  
+The ipak function below checks to see if packages are installed.  If not, those packages are  
+installed first using install.packages() function. 
+
+ipak <- function(pkg){
+      new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
+      if (length(new.pkg)) 
+            install.packages(new.pkg, dependencies = TRUE)
+      sapply(pkg, require, character.only = TRUE)
+}
+
+This represents list of the desired package, then calls the ipak function
+   packages <- c("ggplot2", "plyr", "dplyr", "data.table", "dtplyr", "reshape2", "RColorBrewer",  
+                                                                                 "scales", "grid")
+   ipak(packages)
+````
+
+###### Read data files into R  
+````  
+NEI <- readRDS("summarySCC_PM25.rds")
+SCC <- readRDS("Source_Classification_Code.rds")
+````  
+
+
+
+
 
 
 
