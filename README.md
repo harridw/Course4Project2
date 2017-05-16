@@ -70,7 +70,7 @@ Assumptions:
 * A 'mean' emission represents the best approach to measuring change in emissions over time
 ````
 
-##### Review the data
+##### Review the data (same process applied for each question)
 ````  
 There are two activities that are performed prior to evaluating the data.  The first activity is  
 loading 'packages' to be used in the exploration of the data, including plots of the data.  The  
@@ -97,16 +97,46 @@ This represents list of the desired package, then calls the ipak function
    ipak(packages)
 ````
 
-###### Read data files into R  
+##### Read data files into R  
 ````  
 NEI <- readRDS("summarySCC_PM25.rds")
 SCC <- readRDS("Source_Classification_Code.rds")
 ````  
 
+##### Evaluate the data  
+````
+For this question, we need to calculate the mean Emissions for each year.  As stated in assumptions,  
+the calculation will not recognize splits for SCC, type, or fips.  The aggregate() function, outlined  
+below, calculates the mean of Emissions by year (Emissions ~ year).  
+
+meanNEIyear <- aggregate(Emissions ~ year, data = NEI, FUN = function(x) mean=mean(x))  
+````
+
+##### Plot data (using base plot function)  
+Before plotting data, a few values are defined to be used by plot() function -- value ranges for x and y
+````
+min.year <- round(min(meanNEIyear$year),0)-1
+max.year <- round(max(meanNEIyear$year),0)+1
+
+min.Emissions <- round(min(meanNEIyear$Emissions),0)-1
+max.Emissions <- round(max(meanNEIyear$Emissions),0)
+
+xrange <- range(seq(from = min.year, to = max.year, by = 1))
+yrange <- range(seq(from = min.Emissions, to = max.Emissions, by = 1))
 
 
+Use data in meanNEIyear and defined value ranges to plot to screen
+   with(meanNEIyear, {
+         plot(year, Emissions, pch = 19, xlim = xrange, ylim = yrange,
+                          xlab = "Measurment Year", ylab = "Average Emissions")
+         lines(year, Emissions, type = "l", lty = 1, lwd = 1, col = "black")
+   })
 
 
+Copy line graph plot of three variables to PNG file
+   dev.copy(png, file = "Plot1.png")
+   dev.off()   ## Close device, png is this case, so file can be viewed
+````
 
 
 
