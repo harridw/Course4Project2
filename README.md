@@ -52,19 +52,35 @@ will need to make a single plot. Unless specified, you can use any plotting syst
 ````
 
 #### Each of the 6 questions is reviewed / answered separately.  Below are steps followed for each question.  
-#### * Question -- as written in assignment  
-#### * Data Exploration, including assumptions used / considered  
-#### * Answer to question based on data / plots  
+ * Define question -- as written in assignment  
+ * Data Exploration, including assumptions used / considered  
+ * Answer to question based on data / plots  
 
-##### **Question 1:**  
-#####  Have total emissions from PM2.5 decreased in the United States from 1999 to 2008?  Using the base plotting system,  
-#####  make a plot showing the total PM2.5 emission from all sources for each of the years 1999, 2002, 2005, and 2008.  
-      
-##### **Data Exploration  
+##### Question 1:  
+````
+##### Have total emissions from PM2.5 decreased in the United States from 1999 to 2008?  Using the base plotting system,  
+make a plot showing the total PM2.5 emission from all sources for each of the years 1999, 2002, 2005, and 2008.  
+````
+
+##### Data Exploration  
 ````
 Assumptions:
 * Total emissions implies that there is no split for SCC, Type, or fips  
 * A 'mean' emission represents the best approach to measuring change in emissions over time
+````
+
+##### Review the data
+````  
+There are two activities that are performed prior to evaluating the data.  The first activity is loading 'packages'  
+to be used in the exploration of the data, including plots of the data.  The second activity is reading the files  
+into R.  
+
+NOTE:  It is assumed these files are loaded in working directory, not in zip folder.  
+````
+
+
+
+
 
 
 
