@@ -113,7 +113,7 @@ meanNEIyear <- aggregate(Emissions ~ year, data = NEI, FUN = function(x) mean=me
 ````
 
 ##### Plot data (using base plot function)  
-Before plotting data, a few values are defined to be used by plot() function -- value ranges for x and y
+##### Before plotting data, a few values are defined to be used by plot() function -- value ranges for x and y
 ````
 min.year <- round(min(meanNEIyear$year),0)-1
 max.year <- round(max(meanNEIyear$year),0)+1
