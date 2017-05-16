@@ -57,10 +57,10 @@ will need to make a single plot. Unless specified, you can use any plotting syst
 * Answer to question based on data / plots  
 
 ##### **Question 1:**  Have total emissions from PM2.5 decreased in the United States from 1999 to 2008?  
-#####      Using the base plotting system, make a plot showing the total PM2.5 emission from all sources  
-#####      for each of the years 1999, 2002, 2005, and 2008.  
+      Using the base plotting system, make a plot showing the total PM2.5 emission from all sources  
+      for each of the years 1999, 2002, 2005, and 2008.  
 ````
-**Data Exploration**  
+**Data Exploration  
 Assumptions:
 * Total emissions implies that there is no split for SCC, Type, or fips  
 * A 'mean' emission represents the best approach to measuring change in emissions over time
