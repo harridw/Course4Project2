@@ -424,10 +424,214 @@ Copy line graph plot of three variables to PNG file
 
 
 
+#### Question 5:  
+````
+How have emissions from motor vehicle sources changed from 1999–2008 in Baltimore City?
+````
+
+##### Data Exploration  
+````
+Assumptions:
+* We must subset NEI data to Baltimore City, Maryland (fips == "24510")
+* Refer to SCC file to identify appropriate SCC to subset NEI dataset for motor vehicle sources
+* Question only requires that we calculate a change in Emissions by year
+* A 'mean' emission represents the best approach to measuring change in emissions over time
+````
+
+##### Review the data (same process applied for each question)
+````  
+There are two activities that are performed prior to evaluating the data.  The first activity is  
+loading 'packages' to be used in the exploration of the data, including plots of the data.  The  
+second activity is reading the files into R.  
+
+NOTE:  It is assumed these files are loaded in working directory, not in zip folder.  
+````
+
+###### Install the packages  
+````  
+The ipak function below checks to see if packages are installed.  If not, those packages are  
+installed first using install.packages() function. 
+
+ipak <- function(pkg){
+      new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
+      if (length(new.pkg)) 
+            install.packages(new.pkg, dependencies = TRUE)
+      sapply(pkg, require, character.only = TRUE)
+}
+
+This represents list of the desired package, then calls the ipak function
+   packages <- c("ggplot2", "plyr", "dplyr", "data.table", "dtplyr", "reshape2", "RColorBrewer",  
+                                                                                 "scales", "grid")
+   ipak(packages)
+````
+
+##### Read data files into R  
+````  
+NEI <- readRDS("summarySCC_PM25.rds")
+SCC <- readRDS("Source_Classification_Code.rds")
+````  
+
+##### Evaluate the data  
+````
+For this question, we need to calculate the mean Emissions for each year.  In this evaluation step,    
+we need to calculate the mean Emissions for each year where combustion-related sources use coal.  
+The aggregate() function, outlined below, is used to calculate the mean of Emissions by year.  
+as follows (Emissions ~ year + type).  A first step is to identify appropriate SCC in SCC file
+to create a subset of NEI data connected to the 
+
+Identify all SCC for motor vehicle sources --> using SCC.Level.One == "Mobile Sources" to define category 
+   subSCC <- filter(SCC,grepl("Mobile Sources", SCC$SCC.Level.One, ignore.case = TRUE, fixed = TRUE))
+   subSCC <- select(subSCC, SCC, EI.Sector, SCC.Level.One, SCC.Level.Three, SCC.Level.Four, Short.Name)
+
+Create subset of NEI data for motor vehicle sources defined in subSCC & Baltimore City (fips == "24510")
+  NEIsub <- subset(NEI, SCC %in% unique(subSCC$SCC) & fips == "24510")
+  NEIsub <- select(NEIsub, SCC, fips, year, type, Pollutant, Emissions)
+
+Evaluate NEI subset for duplicate rows
+   dupsNEIsub <- NEIsub[duplicated(NEIsub),]     ## 87 duplicate rows identified
+   NEIsub <- unique(NEIsub)                      ## removes duplicate rows from NEI subset
+
+Include SCC labels / description for NEI subset data  [left join to NEIsub dataset]
+   mrgNEIsub <- merge(NEIsub[,1:6], subSCC[,1:6], by = 1, all.NEIsub = TRUE)
+
+Calculate the mean Emissions by year for qualifying SCC codes(Combustion-related sources that use coal)
+   meanNEIyear <- aggregate(Emissions ~ year, data = mrgNEIsub, FUN = function(x) mean=mean(x))  
+````
+
+##### Plot data (using ggplot2 plotting function)  
+````
+Use data in meanNEIyear
+   qplot(year, Emissions, data = meanNEIyear, geom = c("point", "smooth"),
+      main = "Avg Emissions in Baltimore City from Motor Vehicle Sources", xlab = "Measurement Year",
+      ylab = "Average Emissions")
+
+Copy line graph plot of two variables, mean Emissions by Measurement Year, to PNG file
+   dev.copy(png, file = "Plot5.png")
+   dev.off()   ## Close device, png is this case, so file can be viewed
+````
+
+##### Question 5: Answer  
+````
+Looking at graph, it is clear that mean Emissions for Motor Vehicle sources have declines between 
+1999 - 2008.  The entire decrease occurs between 1999 - 2002.  In fact, a small increase in the  
+mean Emissions can be observed from 2002 - 2008.  To see how different Motor Vehicle sources might  
+contribute to the change in Emissions, we can plot the mean Emission for year and SCC.Level.Three  
+combinations.  Below is code to produce plot:
+
+meanNEIdtl1 <- aggregate(Emissions ~ year + SCC.Level.Three, data = mrgNEIsub, FUN = function(x) mean=mean(x))  
+
+Add attribute color = SCC.Level.Three to identify data uniquely for each SCC.Level.Three
+   qplot(year, Emissions, data = meanNEIdtl1, color = SCC.Level.Three, geom = c("point", "smooth"),
+      main = "Avg Emissions in Baltimore City from Motor Vehicle Sources", xlab = "Measurement Year",
+      ylab = "Average Emissions")
+
+Copy line graph plot of three variables to PNG file
+   dev.copy(png, file = "Plot5b.png")
+   dev.off()   ## Close device, png is this case, so file can be viewed
+````
 
 
 
+#### Question 6:  
+````
+Compare emissions from motor vehicle sources in Baltimore City with emissions from motor vehicle sources  
+in Los Angeles County, California (𝚏𝚒𝚙𝚜 == "𝟶𝟼𝟶𝟹𝟽"). Which city has seen greater changes over time in motor  
+vehicle emissions?
+````
 
+##### Data Exploration  
+````
+Assumptions:
+* We must subset NEI data to Baltimore City (fips == "24510") & Los Angeles (fips == "06037")
+* Refer to SCC file to identify appropriate SCC to subset NEI dataset for motor vehicle sources
+* Question only requires that we calculate a change in Emissions by year
+* A 'mean' emission represents the best approach to measuring change in emissions over time
+````
+
+##### Review the data (same process applied for each question)
+````  
+There are two activities that are performed prior to evaluating the data.  The first activity is  
+loading 'packages' to be used in the exploration of the data, including plots of the data.  The  
+second activity is reading the files into R.  
+
+NOTE:  It is assumed these files are loaded in working directory, not in zip folder.  
+````
+
+###### Install the packages  
+````  
+The ipak function below checks to see if packages are installed.  If not, those packages are  
+installed first using install.packages() function. 
+
+ipak <- function(pkg){
+      new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
+      if (length(new.pkg)) 
+            install.packages(new.pkg, dependencies = TRUE)
+      sapply(pkg, require, character.only = TRUE)
+}
+
+This represents list of the desired package, then calls the ipak function
+   packages <- c("ggplot2", "plyr", "dplyr", "data.table", "dtplyr", "reshape2", "RColorBrewer",  
+                                                                                 "scales", "grid")
+   ipak(packages)
+````
+
+##### Read data files into R  
+````  
+NEI <- readRDS("summarySCC_PM25.rds")
+SCC <- readRDS("Source_Classification_Code.rds")
+````  
+
+##### Evaluate the data  
+````
+For this question, we need to calculate the mean Emissions for each year.  In this evaluation step,    
+we need to calculate the mean Emissions for each year where combustion-related sources use coal.  
+The aggregate() function, outlined below, is used to calculate the mean of Emissions by year.  
+as follows (Emissions ~ year + type).  A first step is to identify appropriate SCC in SCC file
+to create a subset of NEI data connected to the 
+
+Identify all SCC for motor vehicle sources --> using SCC.Level.One == "Mobile Sources" to define category 
+   subSCC <- filter(SCC,grepl("Mobile Sources", SCC$SCC.Level.One, ignore.case = TRUE, fixed = TRUE))
+   subSCC <- select(subSCC, SCC, EI.Sector, SCC.Level.One, SCC.Level.Three, SCC.Level.Four, Short.Name)
+
+Create subset of NEI data for motor vehicle sources defined in subSCC & Baltimore City (fips == "24510")
+  NEIsub <- subset(NEI, SCC %in% unique(subSCC$SCC) & fips %in% c("06037", "24510"))
+  NEIsub <- select(NEIsub, SCC, fips, year, type, Pollutant, Emissions)
+
+Evaluate NEI subset for duplicate rows
+   dupsNEIsub <- NEIsub[duplicated(NEIsub),]     ## 87 duplicate rows identified
+   NEIsub <- unique(NEIsub)                      ## removes duplicate rows from NEI subset
+
+Include SCC labels / description for NEI subset data  [left join to NEIsub dataset]
+   mrgNEIsub <- merge(NEIsub[,1:6], subSCC[,1:6], by = 1, all.NEIsub = TRUE)
+
+Calculate the mean Emissions by year for qualifying SCC codes(Motor Vehicle Sources)
+   meanNEIyear <- aggregate(Emissions ~ year + fips, data = mrgNEIsub, FUN = function(x) mean=mean(x))  
+````
+
+##### Plot data (using ggplot2 plotting function)  
+````
+Use data in meanNEIyear
+   qplot(year, Emissions, data = meanNEIyear, ylim = c(0,25), facets = . ~ fips, geom = c("point", "smooth"),
+      main = "Avg Emissions from Motor Vehicles - Baltimore vs. Los Angeles", xlab = "Measurement Year",
+      ylab = "Average Emissions")
+
+Copy line graph plot of two variables, mean Emissions by Measurement Year, to PNG file
+   dev.copy(png, file = "Plot6.png")
+   dev.off()   ## Close device, png is this case, so file can be viewed
+````
+
+##### Question 6: Answer  
+````
+Looking at graph, it is clear that mean Emissions from Motor Vehicles is lower in Baltimore City  
+and that the mean Emissions have decreased in both markets between 1999 - 2008.  Which market had  
+the greatest decrease in Emissions.  That can be answered differently, as follows:
+
+1.  Los Angeles has the greatest decrease in mean Emissions (roughly  24 --> 18, a decrease of  
+    approximately 6 tons).  The decrease in Baltimore City is roughly 7 --> 2, a decrease of  
+    approximately 5 tons).  This suggests Los Angeles has observed a greater decrease
+2.  If we look at the percentage (%) decrease, the picture changes.  Los Angeles experienced  
+    a decrease of roughly 25% (6 / 24).  For Baltimate, the decrease is more than 50% (5 / 7)
+````
 
 
 
