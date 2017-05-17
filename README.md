@@ -56,7 +56,7 @@ will need to make a single plot. Unless specified, you can use any plotting syst
  * Data Exploration, including assumptions used / considered  
  * Answer to question based on data / plots  
 
-##### Question 1:  
+#### Question 1:  
 ````
 Have total emissions from PM2.5 decreased in the United States from 1999 to 2008?  Using the base  
 plotting system, make a plot showing the total PM2.5 emission from all sources for each of the years  
@@ -146,7 +146,7 @@ The small decrease occurs between 2002 and 2005.
 ````
 
 
-##### Question 2:  
+#### Question 2:  
 ````
 Have total emissions from PM2.5 decreased in the Baltimore City, Maryland (𝚏𝚒𝚙𝚜 == "𝟸𝟺𝟻𝟷𝟶")  
 from 1999 to 2008? Use the base plotting system to make a plot answering this question.  
@@ -236,7 +236,7 @@ The mean Emission shows a considerable decrease from 1999 - 2008.  A decrease is
 ````
 
 
-##### Question 3:  
+#### Question 3:  
 ````
 Of the four types of sources indicated by the 𝚝𝚢𝚙𝚎 (point, nonpoint, onroad, nonroad) variable,  
 which of these four sources have seen decreases in emissions from 1999–2008 for Baltimore City?  
@@ -312,6 +312,117 @@ Copy line graph plot of two variables, mean Emissions by Measurement Year, to PN
 The 'nonpoint' type of source shows the greatest decrease in mean Emissions from 1999 - 2008.  
 This is followed 'point', 'non-road', and 'on-road', respectively.
 ````
+
+
+
+#### Question 4:  
+````
+Across the United States, how have emissions from coal combustion-related sources changed from 1999–2008?
+````
+
+##### Data Exploration  
+````
+Assumptions:
+* We are looking for change in Emissions by year for combustion-related sources using coal 
+* This requires that we can identify these specific SCC as provided in SCC file.
+* We will calculate mean Emission by year for subset of NEI data reflecting applicable SCC
+* A 'mean' emission represents the best approach to measuring change in emissions over time
+````
+
+##### Review the data (same process applied for each question)
+````  
+There are two activities that are performed prior to evaluating the data.  The first activity is  
+loading 'packages' to be used in the exploration of the data, including plots of the data.  The  
+second activity is reading the files into R.  
+
+NOTE:  It is assumed these files are loaded in working directory, not in zip folder.  
+````
+
+###### Install the packages  
+````  
+The ipak function below checks to see if packages are installed.  If not, those packages are  
+installed first using install.packages() function. 
+
+ipak <- function(pkg){
+      new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
+      if (length(new.pkg)) 
+            install.packages(new.pkg, dependencies = TRUE)
+      sapply(pkg, require, character.only = TRUE)
+}
+
+This represents list of the desired package, then calls the ipak function
+   packages <- c("ggplot2", "plyr", "dplyr", "data.table", "dtplyr", "reshape2", "RColorBrewer",  
+                                                                                 "scales", "grid")
+   ipak(packages)
+````
+
+##### Read data files into R  
+````  
+NEI <- readRDS("summarySCC_PM25.rds")
+SCC <- readRDS("Source_Classification_Code.rds")
+````  
+
+##### Evaluate the data  
+````
+For this question, we need to calculate the mean Emissions for each year.  In this evaluation step,    
+we need to calculate the mean Emissions for each year where combustion-related sources use coal.  
+The aggregate() function, outlined below, is used to calculate the mean of Emissions by year.  
+as follows (Emissions ~ year + type).  A first step is to identify appropriate SCC in SCC file
+to create a subset of NEI data connected to the 
+
+Identify all combustion-related sources that use coal (applicable SCC).  We apply 2 criteria to  
+identify SCC: 1) SCC.Level.One contains "Combustion" & 2) SCC.Level.Four contains "Coal"
+   subSCC <- filter(SCC,grepl("Combustion", SCC$SCC.Level.One, ignore.case = TRUE, fixed = TRUE) &
+                                 grepl("Coal", SCC$SCC.Level.Four, ignore.case = TRUE, fixed = TRUE))
+   subSCC <- select(subSCC, SCC, EI.Sector, SCC.Level.One, SCC.Level.Three, SCC.Level.Four, Short.Name)
+
+Subset NEI dataset for applicable SCC identified in subSCC
+  NEIsub <- subset(NEI, SCC %in% unique(subSCC$SCC))
+  NEIsub <- select(NEIsub, SCC, fips, year, type, Pollutant, Emissions)
+
+Evaluate NEI subset for duplicate rows
+   dupsNEIsub <- NEIsub[duplicated(NEIsub),]     ## 87 duplicate rows identified
+   NEIsub <- unique(NEIsub)                      ## removes duplicate rows from NEI subset
+
+Include SCC labels / description for NEI subset data  [left join to NEIsub dataset]
+   mrgNEIsub <- merge(NEIsub[,1:6], subSCC[,1:6], by = 1, all.NEIsub = TRUE)
+
+Calculate the mean Emissions by year for qualifying SCC codes(Combustion-related sources that use coal)
+   meanNEIyear <- aggregate(Emissions ~ year, data = mrgNEIsub, FUN = function(x) mean=mean(x))  
+````
+
+##### Plot data (using ggplot2 plotting function)  
+````
+Use data in meanNEIyear
+   qplot(year, Emissions, data = meanNEIyear, geom = c("point", "smooth"),
+      main = "Average Emissions for Coal Combustion-related Sources", xlab = "Measurement Year",
+      ylab = "Average Emissions")
+
+Copy line graph plot of two variables, mean Emissions by Measurement Year, to PNG file
+   dev.copy(png, file = "Plot4.png")
+   dev.off()   ## Close device, png is this case, so file can be viewed
+````
+
+##### Question 4: Answer  
+````
+A decrease in mean Emissions from combustion-related sources using coal has been observed for period  
+from 1999 - 2008.  A vast majority of this decrease occurs between Measurment Years 2005 - 2008.  
+To provide a little more insight to the change in Emissions, we can plot the mean Emission for year  
+and SCC.Level.Three combinations.  Below is code to produce plot:
+
+meanNEIdtl1 <- aggregate(Emissions ~ year + SCC.Level.Three, data = mrgNEIsub, FUN = function(x) mean=mean(x))  
+
+Add attribute color = SCC.Level.Three to identify data uniquely for each SCC.Level.Three
+   qplot(year, Emissions, data = meanNEIdtl1, color = SCC.Level.Three, geom = c("point", "smooth"),
+         main = "Average Emissions for Coal Combustion-related Sources", xlab = "Measurement Year",
+         ylab = "Average Emissions")
+
+Copy line graph plot of three variables to PNG file
+   dev.copy(png, file = "Plot4b.png")
+   dev.off()   ## Close device, png is this case, so file can be viewed
+````
+
+
 
 
 
