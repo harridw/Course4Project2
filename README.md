@@ -143,7 +143,7 @@ Question 1: Answer
 The mean Emission shows a considerable decrease from 1999 - 2008.  A decrease is observed for each  
 of the reported years: 1999, 2002, 2005, 2008.  The greatest decrease occurs between 1999 and 2002.  
 The small decrease occurs between 2002 and 2005.
-
+````
 
 
 ##### Question 2:  
@@ -236,7 +236,6 @@ The mean Emission shows a considerable decrease from 1999 - 2008.  A decrease is
 ````
 
 
-
 ##### Question 3:  
 ````
 Of the four types of sources indicated by the 𝚝𝚢𝚙𝚎 (point, nonpoint, onroad, nonroad) variable,  
@@ -313,6 +312,7 @@ Question 3: Answer
 The 'nonpoint' type of source shows the greatest decrease in mean Emissions from 1999 - 2008.  
 This is followed 'point', 'non-road', and 'on-road', respectively.
 ````
+
 
 
 
