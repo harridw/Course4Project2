@@ -138,7 +138,7 @@ Copy line graph plot of two variables, mean Emissions by Measurement Year, to PN
    dev.off()   ## Close device, png is this case, so file can be viewed
 ````
 
-Question 1: Answer  
+##### Question 1: Answer  
 ````
 The mean Emission shows a considerable decrease from 1999 - 2008.  A decrease is observed for each  
 of the reported years: 1999, 2002, 2005, 2008.  The greatest decrease occurs between 1999 and 2002.  
@@ -229,7 +229,7 @@ Copy line graph plot of two variables, mean Emissions by Measurement Year, to PN
    dev.off()   ## Close device, png is this case, so file can be viewed
 ````
 
-Question 2: Answer  
+##### Question 2: Answer  
 ````
 The mean Emission shows a considerable decrease from 1999 - 2008.  A decrease is not observed between    
 2002 and 2005, but is for other periods.  The greatest decrease occurs between 1999 and 2002.  
@@ -307,7 +307,7 @@ Copy line graph plot of two variables, mean Emissions by Measurement Year, to PN
    dev.off()   ## Close device, png is this case, so file can be viewed
 ````
 
-Question 3: Answer  
+##### Question 3: Answer  
 ````
 The 'nonpoint' type of source shows the greatest decrease in mean Emissions from 1999 - 2008.  
 This is followed 'point', 'non-road', and 'on-road', respectively.
